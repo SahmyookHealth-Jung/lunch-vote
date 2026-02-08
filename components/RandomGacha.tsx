@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import { getAllMenus } from "@/utils/menuData";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { fetchAllMenusFromDB } from "@/utils/menuData";
 
 const ROLL_DURATION_MS = 2500;
 const ROLL_INTERVAL_MS = 80;
@@ -16,8 +16,20 @@ export default function RandomGacha({ onCreateRoomWithMenu, isPending = false }:
   const [displayText, setDisplayText] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // DB에서 메뉴 로딩
+  const [menus, setMenus] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const menus = getAllMenus();
+  useEffect(() => {
+    const loadMenus = async () => {
+      setLoading(true);
+      const menusList = await fetchAllMenusFromDB();
+      setMenus(menusList);
+      setLoading(false);
+    };
+    loadMenus();
+  }, []);
 
   const startRoll = useCallback(() => {
     if (rolling || menus.length === 0) return;
@@ -43,6 +55,15 @@ export default function RandomGacha({ onCreateRoomWithMenu, isPending = false }:
     setDisplayText(null);
     startRoll();
   }, [startRoll]);
+
+  // 로딩 화면
+  if (loading) {
+    return (
+      <div className="flex min-h-[200px] w-full items-center justify-center rounded-2xl border border-gray-200/80 bg-white/80 p-6 shadow-md backdrop-blur-sm sm:p-8">
+        <p className="text-gray-500">메뉴 불러오는 중…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full rounded-2xl border border-gray-200/80 bg-white/80 p-6 shadow-md backdrop-blur-sm sm:p-8">

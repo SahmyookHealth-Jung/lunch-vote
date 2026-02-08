@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllMenus } from "@/utils/menuData";
+import { fetchAllMenusFromDB } from "@/utils/menuData";
 
 function shuffle<T>(arr: T[]): T[] {
   const out = [...arr];
@@ -32,9 +32,17 @@ export default function FoodTinder({
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
   const [isExiting, setIsExiting] = useState(false);
   const [dragX, setDragX] = useState(0);
+  const [loading, setLoading] = useState(true);
 
+  // DB에서 메뉴 로딩
   useEffect(() => {
-    setMenus(shuffle(getAllMenus()));
+    const loadMenus = async () => {
+      setLoading(true);
+      const menusList = await fetchAllMenusFromDB();
+      setMenus(shuffle(menusList));
+      setLoading(false);
+    };
+    loadMenus();
   }, []);
 
   const currentMenu = menus[currentIndex];
@@ -105,11 +113,14 @@ export default function FoodTinder({
     setShowResult(true);
   }, []);
 
-  const handleReset = useCallback(() => {
-    setMenus(shuffle(getAllMenus()));
+  const handleReset = useCallback(async () => {
+    setLoading(true);
+    const menusList = await fetchAllMenusFromDB();
+    setMenus(shuffle(menusList));
     setCurrentIndex(0);
     setLikedMenus([]);
     setShowResult(false);
+    setLoading(false);
   }, []);
 
   // 결과 화면
@@ -158,11 +169,11 @@ export default function FoodTinder({
     );
   }
 
-  // 로딩 (메뉴 셔플 직후)
-  if (menus.length === 0) {
+  // 로딩 (메뉴 로딩 중)
+  if (loading || menus.length === 0) {
     return (
       <div className="flex min-h-[200px] w-full items-center justify-center rounded-2xl border border-gray-200/80 bg-white/80 text-gray-500 shadow-md backdrop-blur-sm">
-        준비 중…
+        메뉴 불러오는 중…
       </div>
     );
   }

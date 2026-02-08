@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import confetti from "canvas-confetti";
-import { MENUS, getAllMenus } from "@/utils/menuData";
+import { fetchMenusFromDB, fetchAllMenusFromDB } from "@/utils/menuData";
 import type { Category } from "@/utils/menuData";
 
 const CATEGORY_LABELS: { key: Category; label: string }[] = [
@@ -22,11 +22,6 @@ function shuffle<T>(arr: T[]): T[] {
   return out;
 }
 
-function getMenusByCategory(category: Category): string[] {
-  if (category === "all") return getAllMenus();
-  return [...(MENUS[category] ?? [])];
-}
-
 export interface WorldCupProps {
   onCreateRoomWithMenu: (menuName: string) => void | Promise<void>;
   isPending?: boolean;
@@ -39,21 +34,51 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
   const [matchIndex, setMatchIndex] = useState(0);
   const [nextRoundWinners, setNextRoundWinners] = useState<string[]>([]);
   const [champion, setChampion] = useState<string | null>(null);
+  
+  // DB에서 메뉴 데이터 로딩
+  const [menusData, setMenusData] = useState<Record<string, string[]> | null>(null);
+  const [allMenus, setAllMenus] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const startGame = useCallback((cat: Category) => {
-    setCategory(cat);
-    const list = getMenusByCategory(cat);
-    const picked = shuffle(list).slice(0, 8);
-    if (picked.length < 8) {
-      setCurrentRound(picked);
-    } else {
-      setCurrentRound(picked);
-    }
-    setMatchIndex(0);
-    setNextRoundWinners([]);
-    setChampion(null);
-    setStep("game");
+  useEffect(() => {
+    const loadMenus = async () => {
+      setLoading(true);
+      const [menus, allMenusList] = await Promise.all([
+        fetchMenusFromDB(),
+        fetchAllMenusFromDB(),
+      ]);
+      setMenusData(menus);
+      setAllMenus(allMenusList);
+      setLoading(false);
+    };
+    loadMenus();
   }, []);
+
+  const getMenusByCategory = useCallback(
+    (cat: Category): string[] => {
+      if (cat === "all") return [...allMenus];
+      return [...(menusData?.[cat] ?? [])];
+    },
+    [menusData, allMenus]
+  );
+
+  const startGame = useCallback(
+    (cat: Category) => {
+      setCategory(cat);
+      const list = getMenusByCategory(cat);
+      const picked = shuffle(list).slice(0, 8);
+      if (picked.length < 8) {
+        setCurrentRound(picked);
+      } else {
+        setCurrentRound(picked);
+      }
+      setMatchIndex(0);
+      setNextRoundWinners([]);
+      setChampion(null);
+      setStep("game");
+    },
+    [getMenusByCategory]
+  );
 
   const pickWinner = useCallback(
     (winner: string) => {
@@ -89,6 +114,15 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
     }, 300);
     return () => clearTimeout(t);
   }, [step, champion]);
+
+  // 로딩 화면
+  if (loading) {
+    return (
+      <div className="flex min-h-[200px] w-full items-center justify-center rounded-2xl border border-gray-200/80 bg-white/80 p-6 shadow-md backdrop-blur-sm">
+        <p className="text-gray-500">메뉴 불러오는 중…</p>
+      </div>
+    );
+  }
 
   if (step === "category") {
     return (
