@@ -12,11 +12,14 @@ import {
 } from "@/utils/voting-history";
 import WorldCup from "@/components/WorldCup";
 import RandomGacha from "@/components/RandomGacha";
+import FoodTinder from "@/components/FoodTinder";
+import LiveTicker from "@/components/LiveTicker";
 
 const TABS = [
   { id: 0, label: "🏆 음식 이상형 월드컵", short: "월드컵" },
   { id: 1, label: "🎰 랜덤 메뉴 뽑기", short: "뽑기" },
-  { id: 2, label: "🗳️ 투표 방 만들기", short: "투표" },
+  { id: 2, label: "🔥 땡기는 음식 O/X", short: "O/X" },
+  { id: 3, label: "🗳️ 투표 방 만들기", short: "투표" },
 ] as const;
 
 export default function Home() {
@@ -110,9 +113,50 @@ export default function Home() {
     });
   }
 
+  async function handleCreateRoomWithMenus(menuNames: string[]) {
+    setError(null);
+    if (menuNames.length === 0) return;
+    startTransition(async () => {
+      try {
+        const title =
+          menuNames.length === 1
+            ? `오늘 뭐 먹지? - ${menuNames[0]}`
+            : "오늘 뭐 먹지? - 푸드 틴더";
+        const { data, error: roomError } = await supabase
+          .from("rooms")
+          .insert({ title })
+          .select("id")
+          .single();
+
+        if (roomError || !data?.id) {
+          setError(
+            roomError?.message ?? "방 생성에 실패했습니다. 다시 시도해주세요."
+          );
+          return;
+        }
+
+        for (const name of menuNames) {
+          await supabase.from("candidates").insert({
+            room_id: data.id,
+            name,
+            link: null,
+          });
+        }
+
+        addToVotingHistory({ id: data.id, title });
+        router.push(`/room/${data.id}`);
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
+        setError(message);
+      }
+    });
+  }
+
   return (
-    <div className="flex min-h-screen justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <main className="flex w-full max-w-md flex-col items-center px-4 py-8 sm:px-6 sm:py-12">
+    <div className="flex min-h-screen flex-col justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <LiveTicker />
+      <main className="flex w-full max-w-md flex-1 flex-col items-center self-center px-4 py-8 sm:px-6 sm:py-12">
         <h1 className="mb-6 text-center text-3xl font-bold tracking-tight text-indigo-900 sm:mb-8 sm:text-4xl">
           오늘 뭐 먹지?
         </h1>
@@ -185,7 +229,7 @@ export default function Home() {
           )}
         </div>
 
-        {/* 탭 3: 투표 방 만들기 */}
+        {/* 탭 3: 푸드 틴더 */}
         <div
           id="panel-2"
           role="tabpanel"
@@ -194,6 +238,22 @@ export default function Home() {
           className="w-full"
         >
           {activeTab === 2 && (
+            <FoodTinder
+              onCreateRoomWithMenus={handleCreateRoomWithMenus}
+              isPending={isPending}
+            />
+          )}
+        </div>
+
+        {/* 탭 4: 투표 방 만들기 */}
+        <div
+          id="panel-3"
+          role="tabpanel"
+          aria-labelledby="tab-3"
+          hidden={activeTab !== 3}
+          className="w-full"
+        >
+          {activeTab === 3 && (
             <form
               onSubmit={handleCreateRoom}
               className="flex w-full flex-col gap-4 rounded-2xl bg-white/80 p-6 shadow-lg shadow-indigo-100/50 backdrop-blur sm:p-8"
@@ -224,7 +284,7 @@ export default function Home() {
           )}
         </div>
 
-        <p className="mt-6 text-center text-sm text-indigo-600/80 sm:mt-8">
+        <p className="mt-6 text-center text-sm leading-snug text-indigo-600/80 sm:mt-8">
           점심 메뉴를 함께 정해보세요
         </p>
 
