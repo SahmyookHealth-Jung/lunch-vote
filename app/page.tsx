@@ -132,13 +132,13 @@ export default function Home() {
               aria-controls={`panel-${tab.id}`}
               id={`tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex min-h-[44px] min-w-0 flex-1 items-center justify-center rounded-lg px-2 py-3 text-center text-sm font-medium leading-tight transition sm:min-h-[48px] sm:px-3 sm:text-base ${
+              className={`flex min-h-[44px] min-w-0 flex-1 items-center justify-center rounded-lg px-2 py-3 text-center text-sm font-medium leading-snug transition sm:min-h-[52px] sm:px-3 sm:text-base ${
                 activeTab === tab.id
                   ? "bg-white text-indigo-800 shadow-sm"
                   : "text-indigo-600 hover:text-indigo-800"
               }`}
             >
-              <span className="hidden truncate sm:inline">{tab.label}</span>
+              <span className="hidden sm:inline">{tab.label}</span>
               <span className="sm:hidden">{tab.short}</span>
             </button>
           ))}
