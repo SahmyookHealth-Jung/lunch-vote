@@ -125,9 +125,11 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
           type="button"
           onClick={() => onCreateRoomWithMenu(champion)}
           disabled={isPending}
-          className="w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white shadow-md transition hover:bg-indigo-700 disabled:opacity-60"
+          className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-indigo-600 py-3 font-semibold leading-tight text-white shadow-md transition hover:bg-indigo-700 disabled:opacity-60"
         >
-          {isPending ? "만드는 중…" : "이 메뉴로 투표 방 만들기"}
+          <span className="block text-center">
+            {isPending ? "만드는 중…" : "이 메뉴로 투표 방 만들기"}
+          </span>
         </button>
         <button
           type="button"
@@ -135,7 +137,7 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
             setStep("category");
             setCategory(null);
           }}
-          className="mt-3 w-full rounded-xl border border-indigo-200 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
+          className="mt-3 flex min-h-[44px] w-full items-center justify-center rounded-xl border border-indigo-200 py-2 text-sm font-medium leading-tight text-indigo-700 hover:bg-indigo-50"
         >
           처음부터 다시 하기
         </button>

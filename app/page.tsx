@@ -121,7 +121,7 @@ export default function Home() {
         <div
           role="tablist"
           aria-label="미니게임 모드 선택"
-          className="mb-6 flex w-full gap-1 rounded-xl bg-indigo-100/80 p-1 sm:mb-8"
+          className="mb-6 flex w-full gap-1 rounded-xl bg-indigo-100/80 p-1.5 sm:mb-8"
         >
           {TABS.map((tab) => (
             <button
@@ -132,13 +132,13 @@ export default function Home() {
               aria-controls={`panel-${tab.id}`}
               id={`tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
-              className={`min-w-0 flex-1 rounded-lg px-2 py-2.5 text-center text-sm font-medium transition sm:px-3 sm:py-3 sm:text-base ${
+              className={`flex min-h-[44px] min-w-0 flex-1 items-center justify-center rounded-lg px-2 py-3 text-center text-sm font-medium leading-tight transition sm:min-h-[48px] sm:px-3 sm:text-base ${
                 activeTab === tab.id
                   ? "bg-white text-indigo-800 shadow-sm"
                   : "text-indigo-600 hover:text-indigo-800"
               }`}
             >
-              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="hidden truncate sm:inline">{tab.label}</span>
               <span className="sm:hidden">{tab.short}</span>
             </button>
           ))}
@@ -216,7 +216,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full rounded-xl bg-indigo-600 px-4 py-3 font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-60"
+                className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-3 font-semibold leading-tight text-white shadow-md transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-60"
               >
                 {isPending ? "만드는 중…" : "방 만들기"}
               </button>
