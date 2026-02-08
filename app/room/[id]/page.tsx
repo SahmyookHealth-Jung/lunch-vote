@@ -45,6 +45,13 @@ export default function RoomDetailPage() {
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // 후보 수정 모달
+  const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editLink, setEditLink] = useState("");
+  const [editError, setEditError] = useState<string | null>(null);
+  const [editPending, setEditPending] = useState(false);
+
   // 결과 모달 & 룰렛
   const [isResultOpen, setIsResultOpen] = useState(false);
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -465,6 +472,87 @@ export default function RoomDetailPage() {
     }
   }
 
+  function handleOpenEditModal(candidate: Candidate) {
+    setEditingCandidate(candidate);
+    setEditName(candidate.name);
+    setEditLink(candidate.link || "");
+    setEditError(null);
+  }
+
+  function handleCloseEditModal() {
+    setEditingCandidate(null);
+    setEditName("");
+    setEditLink("");
+    setEditError(null);
+  }
+
+  async function handleUpdateCandidate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingCandidate) return;
+    
+    setEditError(null);
+    const name = editName.trim();
+    if (!name) {
+      setEditError("식당 이름을 입력해주세요.");
+      return;
+    }
+
+    setEditPending(true);
+    try {
+      const { error: updateError } = await supabase
+        .from("candidates")
+        .update({
+          name,
+          link: editLink.trim() || null,
+        })
+        .eq("id", editingCandidate.id);
+
+      if (updateError) {
+        setEditError(
+          updateError.message ?? "수정에 실패했습니다. 다시 시도해주세요."
+        );
+        return;
+      }
+
+      await refreshListAndVotes();
+      handleCloseEditModal();
+      setToastMessage("수정되었습니다!");
+      setTimeout(() => setToastMessage(null), 2500);
+    } catch (err) {
+      setEditError(
+        err instanceof Error ? err.message : "수정 중 오류가 발생했습니다."
+      );
+    } finally {
+      setEditPending(false);
+    }
+  }
+
+  async function handleDeleteCandidate(candidateId: string, candidateName: string) {
+    if (!confirm(`"${candidateName}"을(를) 삭제하시겠습니까?`)) return;
+
+    try {
+      const { error: deleteError } = await supabase
+        .from("candidates")
+        .delete()
+        .eq("id", candidateId);
+
+      if (deleteError) {
+        alert(`삭제에 실패했습니다.\n${deleteError.message}`);
+        return;
+      }
+
+      await refreshListAndVotes();
+      setToastMessage("삭제되었습니다!");
+      setTimeout(() => setToastMessage(null), 2500);
+    } catch (err) {
+      alert(
+        err instanceof Error
+          ? `삭제 중 오류가 발생했습니다.\n${err.message}`
+          : "삭제 중 오류가 발생했습니다."
+      );
+    }
+  }
+
   if (!roomId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F9F9F9] px-4">
@@ -573,6 +661,7 @@ export default function RoomDetailPage() {
               {candidates.map((c) => {
                 const count = voteCounts[c.id] ?? 0;
                 const isVoted = myVoteCandidateId === c.id;
+                const canEdit = count === 0; // 투표 수가 0일 때만 수정/삭제 가능
                 return (
                   <li
                     key={c.id}
@@ -582,13 +671,46 @@ export default function RoomDetailPage() {
                         : "border-gray-200"
                     }`}
                   >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium text-gray-900">
-                        {c.name}
-                      </span>
-                      <span className="text-gray-500" title="투표 수">
-                        👍 {count}
-                      </span>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium text-gray-900">
+                          {c.name}
+                        </span>
+                        {c.link && (
+                          <a
+                            href={c.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-sm text-[#FF6B00] hover:text-[#e55f00]"
+                            title="지도에서 보기"
+                          >
+                            🔗
+                          </a>
+                        )}
+                        <span className="text-gray-500" title="투표 수">
+                          👍 {count}
+                        </span>
+                      </div>
+                      {canEdit && (
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditModal(c)}
+                            className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-[#FF6B00]"
+                            title="수정"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCandidate(c.id, c.name)}
+                            className="rounded-lg p-1.5 text-gray-400 transition hover:bg-red-50 hover:text-red-600"
+                            title="삭제"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      )}
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                       {c.link && (
@@ -790,6 +912,88 @@ export default function RoomDetailPage() {
                 )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* 후보 수정 모달 */}
+      {editingCandidate && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-modal-title"
+        >
+          <div className="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl">
+            <button
+              type="button"
+              onClick={handleCloseEditModal}
+              className="absolute right-4 top-4 rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+              aria-label="모달 닫기"
+            >
+              <span className="text-2xl leading-none">×</span>
+            </button>
+
+            <h2 id="edit-modal-title" className="mb-4 text-lg font-semibold text-gray-800">
+              후보 수정
+            </h2>
+
+            <form onSubmit={handleUpdateCandidate} className="flex flex-col gap-4">
+              <div>
+                <label htmlFor="edit-name" className="mb-1 block text-sm font-medium text-gray-700">
+                  식당 이름
+                </label>
+                <input
+                  id="edit-name"
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="식당 이름"
+                  disabled={editPending}
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 placeholder:text-gray-400 focus:border-[#FF6B00] focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/20 disabled:opacity-60"
+                  autoComplete="off"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-link" className="mb-1 block text-sm font-medium text-gray-700">
+                  링크 (선택)
+                </label>
+                <input
+                  id="edit-link"
+                  type="url"
+                  value={editLink}
+                  onChange={(e) => setEditLink(e.target.value)}
+                  placeholder="https://map.naver.com/..."
+                  disabled={editPending}
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 placeholder:text-gray-400 focus:border-[#FF6B00] focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/20 disabled:opacity-60"
+                />
+              </div>
+
+              {editError && (
+                <p role="alert" className="text-sm text-red-600">
+                  {editError}
+                </p>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleCloseEditModal}
+                  disabled={editPending}
+                  className="flex-1 rounded-xl border border-gray-200 py-3 font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-60"
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  disabled={editPending}
+                  className="flex-1 rounded-xl bg-[#FF6B00] py-3 font-semibold text-white shadow-md transition hover:bg-[#e55f00] disabled:opacity-60"
+                >
+                  {editPending ? "저장 중…" : "저장"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
