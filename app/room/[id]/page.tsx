@@ -467,7 +467,7 @@ export default function RoomDetailPage() {
 
   if (!roomId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4">
+      <div className="flex min-h-screen items-center justify-center bg-[#F9F9F9] px-4">
         <p className="text-red-600">잘못된 경로입니다.</p>
       </div>
     );
@@ -475,19 +475,19 @@ export default function RoomDetailPage() {
 
   if (loading && !room) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4">
-        <p className="text-indigo-600">불러오는 중…</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#F9F9F9] px-4">
+        <p className="text-gray-500">불러오는 중…</p>
       </div>
     );
   }
 
   if (error && !room) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#F9F9F9] px-4">
         <p className="text-center text-red-600">{error}</p>
         <Link
           href="/"
-          className="rounded-xl bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+          className="rounded-xl bg-[#FF6B00] px-4 py-2.5 font-medium text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#e55f00] hover:shadow-lg"
         >
           홈으로
         </Link>
@@ -498,9 +498,12 @@ export default function RoomDetailPage() {
   // Step A: 입장 화면 (닉네임 미입력)
   if (!participantId && room) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4">
-        <div className="w-full max-w-sm rounded-2xl bg-white/90 p-8 shadow-lg shadow-indigo-100/50 backdrop-blur">
-          <h2 className="mb-6 text-center text-xl font-bold text-indigo-900">
+      <div className="flex min-h-screen items-center justify-center bg-[#F9F9F9] px-4">
+        <div className="w-full max-w-sm rounded-2xl border border-gray-200/80 bg-white p-8 shadow-lg backdrop-blur-sm">
+          <p className="mb-4 text-center text-5xl" aria-hidden>
+            👋
+          </p>
+          <h2 className="mb-6 text-center text-xl font-bold text-gray-800">
             닉네임을 입력하세요
           </h2>
           <form onSubmit={handleEntry} className="flex flex-col gap-4">
@@ -511,7 +514,7 @@ export default function RoomDetailPage() {
               placeholder="닉네임을 입력하세요"
               disabled={entryPending}
               maxLength={20}
-              className="w-full rounded-xl border border-indigo-200 bg-white px-4 py-3 text-indigo-900 placeholder:text-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
+              className="h-14 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-lg text-gray-800 placeholder:text-gray-400 focus:border-[#FF6B00] focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/20 disabled:opacity-60"
               autoComplete="off"
             />
             {entryError && (
@@ -522,7 +525,7 @@ export default function RoomDetailPage() {
             <button
               type="submit"
               disabled={entryPending}
-              className="w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white shadow-md transition hover:bg-indigo-700 disabled:opacity-60"
+              className="h-14 w-full rounded-xl bg-[#FF6B00] py-3 font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#e55f00] hover:shadow-lg disabled:translate-y-0 disabled:opacity-60"
             >
               {entryPending ? "입장 중…" : "입장하기"}
             </button>
@@ -534,35 +537,35 @@ export default function RoomDetailPage() {
 
   // Step B: 투표 화면
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 pb-24">
+    <div className="min-h-screen bg-[#F9F9F9] pb-28">
       <div className="mx-auto max-w-2xl px-4 py-6">
         {/* 상단: 방 제목 + 공유 */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-2xl font-bold text-indigo-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
             {room?.title ?? "투표 방"}
           </h1>
           <button
             type="button"
             onClick={handleCopyLink}
-            className="shrink-0 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 shadow-sm transition hover:bg-indigo-50"
+            className="shrink-0 rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-200"
           >
-            친구에게 공유하기 (링크 복사)
+            링크 복사
           </button>
         </div>
 
         {error && (
-          <p role="alert" className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+          <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">
             {error}
           </p>
         )}
 
         {/* 후보 리스트 */}
-        <section className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-indigo-900">
+        <section className="mb-8 rounded-2xl bg-white p-5 shadow-lg">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">
             후보 리스트
           </h2>
           {candidates.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-indigo-200 bg-white/60 py-8 text-center text-indigo-600">
+            <p className="rounded-xl border border-dashed border-gray-200 bg-gray-50 py-8 text-center text-gray-500">
               아직 등록된 식당이 없어요. 아래에서 추가해보세요.
             </p>
           ) : (
@@ -573,13 +576,17 @@ export default function RoomDetailPage() {
                 return (
                   <li
                     key={c.id}
-                    className="rounded-xl border border-indigo-100 bg-white p-4 shadow-sm"
+                    className={`rounded-2xl border-2 bg-white p-4 shadow-md transition ${
+                      isVoted
+                        ? "border-[#FF6B00] shadow-[#FF6B00]/10"
+                        : "border-gray-200"
+                    }`}
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium text-indigo-900">
+                      <span className="font-medium text-gray-900">
                         {c.name}
                       </span>
-                      <span className="text-indigo-500" title="투표 수">
+                      <span className="text-gray-500" title="투표 수">
                         👍 {count}
                       </span>
                     </div>
@@ -589,7 +596,7 @@ export default function RoomDetailPage() {
                           href={c.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-indigo-600 underline hover:text-indigo-800"
+                          className="text-sm text-[#FF6B00] underline hover:text-[#e55f00]"
                         >
                           네이버 지도에서 보기
                         </a>
@@ -599,8 +606,8 @@ export default function RoomDetailPage() {
                         onClick={() => handleVote(c.id)}
                         className={
                           isVoted
-                            ? "rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white"
-                            : "rounded-lg border border-indigo-300 bg-white px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
+                            ? "rounded-xl bg-[#FF6B00] px-4 py-2 text-sm font-medium text-white shadow transition hover:-translate-y-0.5 hover:bg-[#e55f00]"
+                            : "rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
                         }
                       >
                         {isVoted ? "투표함" : "투표하기"}
@@ -613,9 +620,9 @@ export default function RoomDetailPage() {
           )}
         </section>
 
-        {/* 후보 등록 폼 */}
-        <section className="rounded-2xl border border-indigo-100 bg-white/80 p-6 shadow-sm backdrop-blur">
-          <h2 className="mb-4 text-lg font-semibold text-indigo-900">
+        {/* 식당 등록 폼 */}
+        <section className="rounded-2xl border border-orange-100 bg-orange-50/60 p-6 shadow-lg">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">
             식당 등록
           </h2>
           <form onSubmit={handleAddCandidate} className="flex flex-col gap-4">
@@ -625,14 +632,17 @@ export default function RoomDetailPage() {
               onChange={(e) => setCandidateName(e.target.value)}
               placeholder="식당 이름"
               disabled={addPending}
-              className="w-full rounded-xl border border-indigo-200 bg-white px-4 py-3 text-indigo-900 placeholder:text-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 placeholder:text-gray-400 focus:border-[#FF6B00] focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/20 disabled:opacity-60"
               autoComplete="off"
             />
             <button
               type="button"
               onClick={openNaverMap}
-              className="w-full rounded-xl border border-indigo-200 bg-white py-3 text-sm font-medium text-indigo-700 transition hover:bg-indigo-50"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#03C75A] py-3 text-sm font-medium text-white shadow transition hover:-translate-y-0.5 hover:bg-[#02b350]"
             >
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded bg-white/20 text-xs font-bold">
+                N
+              </span>
               네이버 지도로 찾기
             </button>
             <input
@@ -641,7 +651,7 @@ export default function RoomDetailPage() {
               onChange={(e) => setCandidateLink(e.target.value)}
               placeholder="식당 링크 (붙여넣기)"
               disabled={addPending}
-              className="w-full rounded-xl border border-indigo-200 bg-white px-4 py-3 text-indigo-900 placeholder:text-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 placeholder:text-gray-400 focus:border-[#FF6B00] focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/20 disabled:opacity-60"
             />
             {addError && (
               <p role="alert" className="text-sm text-red-600">
@@ -651,28 +661,30 @@ export default function RoomDetailPage() {
             <button
               type="submit"
               disabled={addPending}
-              className="w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white shadow-md transition hover:bg-indigo-700 disabled:opacity-60"
+              className="w-full rounded-xl border-2 border-[#FF6B00] bg-white py-2.5 font-medium text-[#FF6B00] transition hover:bg-[#FF6B00]/5 disabled:opacity-60"
             >
               {addPending ? "등록 중…" : "등록하기"}
             </button>
           </form>
         </section>
 
-        {/* 투표 종료 및 결과 보기 */}
-        <section className="mt-8">
-          <button
-            type="button"
-            onClick={handleOpenResult}
-            className="w-full rounded-xl bg-indigo-600 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-indigo-700"
-          >
-            투표 종료 및 결과 보기
-          </button>
-        </section>
+        {/* 투표 종료 및 결과 보기 - 하단 고정 */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200/80 bg-[#F9F9F9]/95 px-4 py-4 backdrop-blur-sm">
+          <div className="mx-auto max-w-2xl">
+            <button
+              type="button"
+              onClick={handleOpenResult}
+              className="w-full rounded-2xl bg-[#FF6B00] py-4 text-lg font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#e55f00] hover:shadow-xl"
+            >
+              투표 종료 및 결과 보기
+            </button>
+          </div>
+        </div>
 
         <div className="mt-6 text-center">
           <Link
             href="/"
-            className="text-sm text-indigo-600 underline hover:text-indigo-800"
+            className="text-sm text-gray-600 underline hover:text-[#FF6B00]"
           >
             홈으로
           </Link>
@@ -682,34 +694,34 @@ export default function RoomDetailPage() {
       {/* 결과 발표 모달 */}
       {isResultOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="result-modal-title"
         >
-          <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-8 shadow-2xl">
+          <div className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-gray-200 bg-white p-8 shadow-2xl">
             <button
               type="button"
               onClick={() => setIsResultOpen(false)}
-              className="absolute right-4 top-4 rounded-lg p-1 text-indigo-400 hover:bg-indigo-50 hover:text-indigo-700"
+              className="absolute right-4 top-4 rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
               aria-label="모달 닫기"
             >
               <span className="text-2xl leading-none">×</span>
             </button>
 
-            <h2 id="result-modal-title" className="mb-2 text-center text-sm font-medium text-indigo-500">
+            <h2 id="result-modal-title" className="mb-2 text-center text-sm font-medium text-[#FF6B00]">
               🏆 1등 식당
             </h2>
-            <p className="mb-8 text-center text-3xl font-bold text-indigo-900">
+            <p className="mb-8 text-center text-3xl font-bold text-gray-900">
               {getFirstPlaceName()}
             </p>
 
-            <div className="mb-6 border-t border-indigo-100 pt-6">
+            <div className="mb-6 border-t border-gray-200 pt-6">
               <button
                 type="button"
                 onClick={handleSpinRoulette}
                 disabled={rouletteSpinning}
-                className="w-full rounded-xl border-2 border-dashed border-indigo-200 py-3 text-base font-medium text-indigo-700 transition hover:border-indigo-400 hover:bg-indigo-50 disabled:opacity-60"
+                className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 py-3 text-base font-medium text-gray-700 transition hover:border-[#FF6B00]/30 hover:bg-orange-50/50 disabled:opacity-60"
               >
                 ☕️ 후식 내기 룰렛 돌리기
               </button>
@@ -720,7 +732,7 @@ export default function RoomDetailPage() {
               <div className="flex flex-col items-center gap-4">
                 <div className="relative flex h-[280px] w-[280px] items-center justify-center">
                   <div
-                    className="absolute top-2 z-10 h-0 w-0 border-l-[12px] border-r-[12px] border-t-[20px] border-l-transparent border-r-transparent border-t-indigo-900"
+                    className="absolute top-2 z-10 h-0 w-0 border-l-[12px] border-r-[12px] border-t-[20px] border-l-transparent border-r-transparent border-t-gray-900"
                     aria-hidden
                   />
                   <div
@@ -769,9 +781,9 @@ export default function RoomDetailPage() {
                 </div>
 
                 {rouletteWinner && !rouletteSpinning && (
-                  <div className="w-full rounded-xl bg-indigo-100 p-4 text-center">
-                    <p className="text-xs font-medium text-indigo-500">☕️ 커피 쏠 사람</p>
-                    <p className="mt-1 text-2xl font-bold text-indigo-900">
+                  <div className="w-full rounded-xl bg-orange-50 border border-orange-100 p-4 text-center">
+                    <p className="text-xs font-medium text-[#FF6B00]">☕️ 커피 쏠 사람</p>
+                    <p className="mt-1 text-2xl font-bold text-gray-900">
                       {rouletteWinner.nickname}
                     </p>
                   </div>
@@ -787,7 +799,7 @@ export default function RoomDetailPage() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-indigo-900 px-5 py-3 text-sm font-medium text-white shadow-lg"
+          className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-gray-800 px-5 py-3 text-sm font-medium text-white shadow-lg"
         >
           {toastMessage}
         </div>

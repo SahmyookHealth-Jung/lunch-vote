@@ -92,17 +92,17 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
 
   if (step === "category") {
     return (
-      <div className="w-full rounded-2xl bg-white/90 p-6 shadow-lg shadow-indigo-100/50 backdrop-blur">
-        <h2 className="mb-4 text-center text-lg font-semibold text-indigo-900">
+      <div className="w-full rounded-2xl border border-gray-200/80 bg-white/80 p-6 shadow-md backdrop-blur-sm sm:p-8">
+        <h2 className="mb-5 text-center text-lg font-semibold text-gray-800">
           카테고리를 선택하세요
         </h2>
-        <div className="flex flex-wrap justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-3">
           {CATEGORY_LABELS.map(({ key, label }) => (
             <button
               key={key}
               type="button"
               onClick={() => startGame(key)}
-              className="rounded-xl bg-indigo-100 px-4 py-3 font-medium text-indigo-800 transition hover:bg-indigo-200"
+              className="rounded-full bg-gray-100 px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-[#FF6B00] hover:text-white hover:shadow-md"
             >
               {label}
             </button>
@@ -114,18 +114,18 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
 
   if (step === "champion" && champion) {
     return (
-      <div className="w-full rounded-2xl bg-white/90 p-6 shadow-lg shadow-indigo-100/50 backdrop-blur">
-        <p className="mb-2 text-center text-sm font-medium text-indigo-500">
+      <div className="w-full rounded-2xl border border-gray-200/80 bg-white/80 p-6 shadow-md backdrop-blur-sm sm:p-8">
+        <p className="mb-2 text-center text-sm font-medium text-gray-500">
           🏆 우승 메뉴
         </p>
-        <p className="mb-6 text-center text-2xl font-bold text-indigo-900 sm:text-3xl">
+        <p className="mb-6 text-center text-2xl font-bold text-gray-800 sm:text-3xl">
           {champion}
         </p>
         <button
           type="button"
           onClick={() => onCreateRoomWithMenu(champion)}
           disabled={isPending}
-          className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-indigo-600 py-3 font-semibold leading-tight text-white shadow-md transition hover:bg-indigo-700 disabled:opacity-60"
+          className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-[#FF6B00] py-3 font-semibold leading-tight text-white shadow-md transition hover:bg-[#e55f00] disabled:opacity-60"
         >
           <span className="block text-center">
             {isPending ? "만드는 중…" : "이 메뉴로 투표 방 만들기"}
@@ -137,7 +137,7 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
             setStep("category");
             setCategory(null);
           }}
-          className="mt-3 flex min-h-[44px] w-full items-center justify-center rounded-xl border border-indigo-200 py-2 text-sm font-medium leading-tight text-indigo-700 hover:bg-indigo-50"
+          className="mt-3 flex min-h-[44px] w-full items-center justify-center rounded-xl border border-gray-200 py-2 text-sm font-medium leading-tight text-gray-700 hover:bg-gray-50"
         >
           처음부터 다시 하기
         </button>
@@ -152,12 +152,12 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
 
   if (!left || !right) {
     return (
-      <div className="w-full rounded-2xl bg-white/90 p-6 text-center text-indigo-600">
+      <div className="w-full rounded-2xl border border-gray-200/80 bg-white/80 p-6 text-center text-gray-600 shadow-md backdrop-blur-sm">
         메뉴가 부족해요. 다른 카테고리를 선택해 주세요.
         <button
           type="button"
           onClick={() => setStep("category")}
-          className="mt-3 block w-full rounded-xl border border-indigo-200 py-2 text-sm font-medium"
+          className="mt-3 block w-full rounded-xl border border-gray-200 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           카테고리 다시 선택
         </button>
@@ -166,27 +166,27 @@ export default function WorldCup({ onCreateRoomWithMenu, isPending = false }: Wo
   }
 
   return (
-    <div className="w-full rounded-2xl bg-white/90 p-4 shadow-lg shadow-indigo-100/50 backdrop-blur sm:p-6">
-      <p className="mb-4 text-center text-sm font-semibold text-indigo-500">
+    <div className="w-full rounded-2xl border border-gray-200/80 bg-white/80 p-4 shadow-md backdrop-blur-sm sm:p-6">
+      <p className="mb-4 text-center text-sm font-semibold text-gray-500">
         {roundLabel}
       </p>
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         <button
           type="button"
           onClick={() => pickWinner(left)}
-          className="flex min-h-[80px] items-center justify-center rounded-xl border-2 border-indigo-200 bg-white px-3 py-4 text-base font-semibold text-indigo-900 transition hover:border-indigo-400 hover:bg-indigo-50 sm:min-h-[100px] sm:text-lg"
+          className="flex min-h-[80px] items-center justify-center rounded-xl border-2 border-gray-200 bg-white px-3 py-4 text-base font-semibold text-gray-800 transition hover:border-[#FF6B00] hover:bg-[#FFF5EF] sm:min-h-[100px] sm:text-lg"
         >
           {left}
         </button>
         <button
           type="button"
           onClick={() => pickWinner(right)}
-          className="flex min-h-[80px] items-center justify-center rounded-xl border-2 border-indigo-200 bg-white px-3 py-4 text-base font-semibold text-indigo-900 transition hover:border-indigo-400 hover:bg-indigo-50 sm:min-h-[100px] sm:text-lg"
+          className="flex min-h-[80px] items-center justify-center rounded-xl border-2 border-gray-200 bg-white px-3 py-4 text-base font-semibold text-gray-800 transition hover:border-[#FF6B00] hover:bg-[#FFF5EF] sm:min-h-[100px] sm:text-lg"
         >
           {right}
         </button>
       </div>
-      <p className="mt-3 text-center text-xs text-indigo-400">VS</p>
+      <p className="mt-3 text-center text-xs text-gray-400">VS</p>
     </div>
   );
 }

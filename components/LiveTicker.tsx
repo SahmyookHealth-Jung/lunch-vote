@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { supabase } from "@/utils/supabase/client";
 
 const TICKER_STORAGE_KEY = "lunch-vote-ticker-closed";
@@ -15,27 +14,27 @@ type TickerItem = {
 const MESSAGES: ((name: string) => React.ReactNode)[] = [
   (name) => (
     <>
-      지금 누군가 <span className="font-semibold text-indigo-600">[{name}]</span>을(를) 후보에 등록했습니다! 🔥
+      지금 누군가 <span className="font-semibold text-[#FF6B00]">[{name}]</span>을(를) 후보에 등록했습니다! 🔥
     </>
   ),
   (name) => (
     <>
-      서울 어딘가에서 <span className="font-semibold text-indigo-600">[{name}]</span> 투표 중! 🥓
+      서울 어딘가에서 <span className="font-semibold text-[#FF6B00]">[{name}]</span> 투표 중! 🥓
     </>
   ),
   (name) => (
     <>
-      방금 <span className="font-semibold text-indigo-600">[{name}]</span>이(가) 등록됐어요 ✨
+      방금 <span className="font-semibold text-[#FF6B00]">[{name}]</span>이(가) 등록됐어요 ✨
     </>
   ),
   (name) => (
     <>
-      <span className="font-semibold text-indigo-600">[{name}]</span> 후보 등록! 오늘 메뉴 후보에 합류 🍽️
+      <span className="font-semibold text-[#FF6B00]">[{name}]</span> 후보 등록! 오늘 메뉴 후보에 합류 🍽️
     </>
   ),
   (name) => (
     <>
-      어디선가 <span className="font-semibold text-indigo-600">[{name}]</span> 투표가 진행 중이에요 📍
+      어디선가 <span className="font-semibold text-[#FF6B00]">[{name}]</span> 투표가 진행 중이에요 📍
     </>
   ),
 ];
@@ -103,7 +102,7 @@ export default function LiveTicker() {
 
   if (loading && items.length === 0) {
     return (
-      <div className="relative flex h-10 w-full items-center justify-center border-b border-indigo-100 bg-white/95 px-4 backdrop-blur-sm">
+      <div className="relative flex h-10 w-full items-center justify-center border-b border-gray-200 bg-white/95 px-4 backdrop-blur-sm">
         <span className="text-sm text-gray-500">실시간 투표 불러오는 중…</span>
         <button
           type="button"
@@ -119,7 +118,7 @@ export default function LiveTicker() {
 
   if (items.length === 0) {
     return (
-      <div className="relative flex h-10 w-full items-center justify-center border-b border-indigo-100 bg-white/95 px-4 backdrop-blur-sm">
+      <div className="relative flex h-10 w-full items-center justify-center border-b border-gray-200 bg-white/95 px-4 backdrop-blur-sm">
         <span className="text-sm text-gray-500">
           아직 등록된 후보가 없어요. 첫 번째로 등록해 보세요!
         </span>
@@ -136,31 +135,30 @@ export default function LiveTicker() {
   }
 
   const tickerContent = items.map((item, i) => (
-    <Link
+    <span
       key={item.id}
-      href={`/room/${item.room_id}`}
-      className="shrink-0 whitespace-nowrap text-sm font-medium text-gray-700 transition hover:text-indigo-600"
+      className="shrink-0 cursor-default whitespace-nowrap text-sm font-medium text-gray-700"
     >
       {pickMessage(item.name, i)}
-    </Link>
+    </span>
   ));
 
   return (
     <div
-      className="relative flex h-10 w-full items-center overflow-hidden border-b border-indigo-100 bg-white/95 py-2 backdrop-blur-sm"
+      className="relative flex h-10 w-full items-center overflow-hidden border-b border-gray-200 bg-white/95 py-2 backdrop-blur-sm"
       aria-label="실시간 점심 투표 현황"
     >
-      <span className="z-10 ml-2 shrink-0 rounded bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-600">
+      <span className="z-10 ml-2 shrink-0 rounded bg-[#FFF5EF] px-2 py-0.5 text-xs font-medium text-[#FF6B00]">
         Live
       </span>
       <div className="flex min-w-0 flex-1 overflow-hidden pr-10">
         <div className="flex animate-marquee items-center gap-8 whitespace-nowrap py-1 pl-4">
           {tickerContent}
-          <span className="shrink-0 text-indigo-200" aria-hidden>
+          <span className="shrink-0 text-gray-300" aria-hidden>
             •
           </span>
           {tickerContent}
-          <span className="shrink-0 text-indigo-200" aria-hidden>
+          <span className="shrink-0 text-gray-300" aria-hidden>
             •
           </span>
         </div>

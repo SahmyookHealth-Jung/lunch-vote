@@ -115,22 +115,22 @@ export default function FoodTinder({
   // 결과 화면
   if (showResult) {
     return (
-      <div className="w-full rounded-2xl bg-white/90 p-6 shadow-lg shadow-indigo-100/50 backdrop-blur">
-        <h2 className="mb-4 text-center text-lg font-semibold text-indigo-900">
+      <div className="w-full rounded-2xl border border-gray-200/80 bg-white/80 p-6 shadow-md backdrop-blur-sm sm:p-8">
+        <h2 className="mb-4 text-center text-lg font-semibold text-gray-800">
           👍 좋아요한 메뉴
         </h2>
         {likedMenus.length === 0 ? (
-          <p className="mb-6 text-center text-indigo-600">
+          <p className="mb-6 text-center text-gray-500">
             좋아요한 메뉴가 없어요.
           </p>
         ) : (
-          <ul className="mb-6 max-h-[200px] overflow-y-auto rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
+          <ul className="mb-6 max-h-[200px] overflow-y-auto rounded-xl border border-gray-200 bg-[#F9F9F9] p-4">
             {likedMenus.map((name, i) => (
               <li
                 key={`${name}-${i}`}
-                className="border-b border-indigo-100/80 py-2 last:border-0"
+                className="border-b border-gray-200 py-2 last:border-0"
               >
-                <span className="font-medium text-indigo-900">{name}</span>
+                <span className="font-medium text-gray-800">{name}</span>
               </li>
             ))}
           </ul>
@@ -141,7 +141,7 @@ export default function FoodTinder({
               type="button"
               onClick={() => onCreateRoomWithMenus(likedMenus)}
               disabled={isPending}
-              className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-indigo-600 py-3 font-semibold leading-tight text-white shadow-md transition hover:bg-indigo-700 disabled:opacity-60"
+              className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-[#FF6B00] py-3 font-semibold leading-tight text-white shadow-md transition hover:bg-[#e55f00] disabled:opacity-60"
             >
               {isPending ? "만드는 중…" : "이 메뉴들로 투표방 만들기"}
             </button>
@@ -149,7 +149,7 @@ export default function FoodTinder({
           <button
             type="button"
             onClick={handleReset}
-            className="flex min-h-[44px] w-full items-center justify-center rounded-xl border border-indigo-200 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50"
+            className="flex min-h-[44px] w-full items-center justify-center rounded-xl border border-gray-200 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             다시 하기
           </button>
@@ -161,7 +161,7 @@ export default function FoodTinder({
   // 로딩 (메뉴 셔플 직후)
   if (menus.length === 0) {
     return (
-      <div className="flex min-h-[200px] w-full items-center justify-center rounded-2xl bg-white/90 text-indigo-500">
+      <div className="flex min-h-[200px] w-full items-center justify-center rounded-2xl border border-gray-200/80 bg-white/80 text-gray-500 shadow-md backdrop-blur-sm">
         준비 중…
       </div>
     );
@@ -170,15 +170,15 @@ export default function FoodTinder({
   // 카드 다 씀
   if (!currentMenu) {
     return (
-      <div className="flex min-h-[200px] w-full items-center justify-center rounded-2xl bg-white/90 text-indigo-500">
+      <div className="flex min-h-[200px] w-full items-center justify-center rounded-2xl border border-gray-200/80 bg-white/80 text-gray-500 shadow-md backdrop-blur-sm">
         결과를 불러오는 중…
       </div>
     );
   }
 
   return (
-    <div className="w-full rounded-2xl bg-white/90 p-4 shadow-lg shadow-indigo-100/50 backdrop-blur sm:p-6">
-      <p className="mb-3 text-center text-sm font-medium text-indigo-500">
+    <div className="w-full rounded-2xl border border-gray-200/80 bg-white/80 p-4 shadow-md backdrop-blur-sm sm:p-6">
+      <p className="mb-3 text-center text-sm font-medium text-gray-500">
         {swipedCount} / 10장 넘김 · 오른쪽 좋아요, 왼쪽 싫어요
       </p>
 
@@ -216,10 +216,10 @@ export default function FoodTinder({
                       ? "bg-green-100"
                       : dragX < -SWIPE_THRESHOLD
                         ? "bg-red-100"
-                        : "bg-indigo-50"
+                        : "bg-[#F9F9F9]"
               }`}
             >
-              <span className="text-center text-2xl font-bold text-indigo-900 sm:text-3xl">
+              <span className="text-center text-2xl font-bold text-gray-800 sm:text-3xl">
                 {currentMenu}
               </span>
             </div>
@@ -251,7 +251,7 @@ export default function FoodTinder({
       <button
         type="button"
         onClick={handleEndGame}
-        className="mt-4 w-full rounded-xl border border-indigo-200 py-2.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50"
+        className="mt-4 w-full rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
       >
         중단하고 결과 보기
       </button>

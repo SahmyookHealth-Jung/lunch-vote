@@ -3,6 +3,12 @@
 import { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  Trophy,
+  Dices,
+  Heart,
+  Vote,
+} from "lucide-react";
 import { supabase } from "@/utils/supabase/client";
 import {
   getVotingHistory,
@@ -16,10 +22,10 @@ import FoodTinder from "@/components/FoodTinder";
 import LiveTicker from "@/components/LiveTicker";
 
 const TABS = [
-  { id: 0, label: "🏆 음식 이상형 월드컵", short: "월드컵" },
-  { id: 1, label: "🎰 랜덤 메뉴 뽑기", short: "뽑기" },
-  { id: 2, label: "🔥 땡기는 음식 O/X", short: "O/X" },
-  { id: 3, label: "🗳️ 투표 방 만들기", short: "투표" },
+  { id: 0, label: "음식 이상형 월드컵", short: "월드컵", Icon: Trophy },
+  { id: 1, label: "랜덤 메뉴 뽑기", short: "뽑기", Icon: Dices },
+  { id: 2, label: "땡기는 음식 O/X", short: "O/X", Icon: Heart },
+  { id: 3, label: "투표 방 만들기", short: "투표", Icon: Vote },
 ] as const;
 
 export default function Home() {
@@ -154,50 +160,69 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <div className="min-h-screen bg-[#F9F9F9]">
       <LiveTicker />
-      <main className="flex w-full max-w-md flex-1 flex-col items-center self-center px-4 py-8 sm:px-6 sm:py-12">
-        <h1 className="mb-6 text-center text-3xl font-bold tracking-tight text-indigo-900 sm:mb-8 sm:text-4xl">
+      <main className="mx-auto flex w-full max-w-[680px] flex-1 flex-col px-4 py-8 sm:px-6 sm:py-12">
+        <h1 className="title-gradient mb-2 text-center text-4xl font-bold tracking-tight sm:text-5xl">
           오늘 뭐 먹지?
         </h1>
+        <p className="mb-10 text-center text-sm text-gray-500 sm:mb-12">
+          점심 메뉴를 함께 정해보세요
+        </p>
 
-        {/* 탭 메뉴 */}
+        {/* Feature Navigation - 2x2 Glassmorphism Cards */}
         <div
           role="tablist"
-          aria-label="미니게임 모드 선택"
-          className="mb-6 flex w-full gap-1 rounded-xl bg-indigo-100/80 p-1.5 sm:mb-8"
+          aria-label="기능 선택"
+          className="mb-8 grid grid-cols-2 gap-4 sm:gap-5"
         >
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              aria-controls={`panel-${tab.id}`}
-              id={`tab-${tab.id}`}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex min-h-[44px] min-w-0 flex-1 items-center justify-center rounded-lg px-2 py-3 text-center text-sm font-medium leading-snug transition sm:min-h-[52px] sm:px-3 sm:text-base ${
-                activeTab === tab.id
-                  ? "bg-white text-indigo-800 shadow-sm"
-                  : "text-indigo-600 hover:text-indigo-800"
-              }`}
-            >
-              <span className="hidden sm:inline">{tab.label}</span>
-              <span className="sm:hidden">{tab.short}</span>
-            </button>
-          ))}
+          {TABS.map((tab) => {
+            const Icon = tab.Icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`panel-${tab.id}`}
+                id={`tab-${tab.id}`}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex flex-col items-center justify-center gap-2 rounded-xl border bg-white/80 px-4 py-6 shadow-md backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg sm:gap-3 sm:py-8 ${
+                  isActive
+                    ? "border-[#FF6B00] border-2 bg-[#FFF5EF] shadow-[0_4px_14px_rgba(255,107,0,0.12)]"
+                    : "border-gray-200/80 hover:border-gray-300 hover:shadow-xl"
+                }`}
+              >
+                <Icon
+                  className={`h-7 w-7 sm:h-8 sm:w-8 ${
+                    isActive ? "text-[#FF6B00]" : "text-gray-500"
+                  }`}
+                  strokeWidth={1.8}
+                />
+                <span
+                  className={`text-center text-sm font-semibold sm:text-base ${
+                    isActive ? "text-[#FF6B00]" : "text-gray-700"
+                  }`}
+                >
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.short}</span>
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {error && (
           <p
             role="alert"
-            className="mb-4 w-full rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
+            className="mb-4 w-full rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700"
           >
             {error}
           </p>
         )}
 
-        {/* 탭 1: 월드컵 */}
+        {/* Panels */}
         <div
           id="panel-0"
           role="tabpanel"
@@ -212,8 +237,6 @@ export default function Home() {
             />
           )}
         </div>
-
-        {/* 탭 2: 랜덤 뽑기 */}
         <div
           id="panel-1"
           role="tabpanel"
@@ -228,8 +251,6 @@ export default function Home() {
             />
           )}
         </div>
-
-        {/* 탭 3: 푸드 틴더 */}
         <div
           id="panel-2"
           role="tabpanel"
@@ -244,8 +265,6 @@ export default function Home() {
             />
           )}
         </div>
-
-        {/* 탭 4: 투표 방 만들기 */}
         <div
           id="panel-3"
           role="tabpanel"
@@ -256,7 +275,7 @@ export default function Home() {
           {activeTab === 3 && (
             <form
               onSubmit={handleCreateRoom}
-              className="flex w-full flex-col gap-4 rounded-2xl bg-white/80 p-6 shadow-lg shadow-indigo-100/50 backdrop-blur sm:p-8"
+              className="flex w-full flex-col gap-4 rounded-2xl border border-gray-200/80 bg-white/80 p-6 shadow-md backdrop-blur-sm sm:p-8"
             >
               <label htmlFor="room-title" className="sr-only">
                 방 제목 입력
@@ -268,15 +287,14 @@ export default function Home() {
                 onChange={(e) => setRoomTitle(e.target.value)}
                 placeholder="방 제목 입력"
                 disabled={isPending}
-                className="w-full rounded-xl border border-indigo-200 bg-white px-4 py-3 text-indigo-900 placeholder:text-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
+                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-800 placeholder:text-gray-400 focus:border-[#FF6B00] focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/20 disabled:opacity-60"
                 maxLength={100}
                 autoComplete="off"
               />
-
               <button
                 type="submit"
                 disabled={isPending}
-                className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-3 font-semibold leading-tight text-white shadow-md transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-60"
+                className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-[#FF6B00] px-4 py-3 font-semibold text-white shadow-md transition hover:bg-[#e55f00] focus:outline-none focus:ring-2 focus:ring-[#FF6B00]/40 focus:ring-offset-2 disabled:opacity-60"
               >
                 {isPending ? "만드는 중…" : "방 만들기"}
               </button>
@@ -284,36 +302,34 @@ export default function Home() {
           )}
         </div>
 
-        <p className="mt-6 text-center text-sm leading-snug text-indigo-600/80 sm:mt-8">
-          점심 메뉴를 함께 정해보세요
-        </p>
-
-        {/* 최근 방문한 방 */}
-        <section className="mt-10 w-full max-w-md sm:mt-12">
-          <h2 className="mb-3 text-lg font-semibold text-indigo-900">
-            🕒 최근 방문한 방
+        {/* Recent Rooms - Floating Card / Ticket */}
+        <section className="mt-12 w-full">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">
+            최근 방문한 방
           </h2>
           {!mounted ? (
-            <p className="rounded-xl border border-indigo-100 bg-white/60 py-6 text-center text-sm text-indigo-500">
+            <div className="rounded-2xl border border-gray-200/80 bg-white/80 py-8 text-center text-sm text-gray-500 shadow-sm backdrop-blur-sm">
               불러오는 중…
-            </p>
+            </div>
           ) : history.length === 0 ? (
-            <p className="rounded-xl border border-indigo-100 bg-white/60 py-6 text-center text-sm text-indigo-600">
+            <div className="rounded-2xl border border-gray-200/80 bg-white/80 py-8 text-center text-sm text-gray-500 shadow-sm backdrop-blur-sm">
               아직 방문한 방이 없습니다.
-            </p>
+            </div>
           ) : (
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-3">
               {history.map((item) => (
                 <li
                   key={item.id}
-                  className="flex items-center gap-2 rounded-xl border border-indigo-100 bg-white/80 shadow-sm transition hover:bg-white"
+                  className="group relative rounded-2xl border border-gray-200/80 bg-white/90 py-4 pl-5 pr-12 shadow-sm backdrop-blur-sm transition-all hover:shadow-md"
                 >
                   <Link
                     href={`/room/${item.id}`}
-                    className="min-w-0 flex-1 px-4 py-3 text-left font-medium text-indigo-900 hover:text-indigo-700"
+                    className="block min-w-0 text-left"
                   >
-                    <span className="block truncate">{item.title}</span>
-                    <span className="mt-0.5 block text-xs font-normal text-indigo-500">
+                    <span className="block font-bold text-gray-800 truncate">
+                      {item.title}
+                    </span>
+                    <span className="mt-0.5 block text-xs font-normal text-gray-500">
                       {new Date(item.visitedAt).toLocaleDateString("ko-KR", {
                         month: "short",
                         day: "numeric",
@@ -329,10 +345,10 @@ export default function Home() {
                       removeFromVotingHistory(item.id);
                       setHistory(getVotingHistory());
                     }}
-                    className="shrink-0 rounded-lg p-2 text-indigo-400 hover:bg-indigo-50 hover:text-indigo-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-gray-300 opacity-0 transition-opacity hover:bg-gray-100 hover:text-gray-600 group-hover:opacity-100"
                     aria-label={`${item.title} 삭제`}
                   >
-                    [X]
+                    <span className="text-base leading-none">×</span>
                   </button>
                 </li>
               ))}
